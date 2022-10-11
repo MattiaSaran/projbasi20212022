@@ -1,3 +1,5 @@
+from datetime import date
+from statistics import mode
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
@@ -80,10 +82,10 @@ class Course(Base):
                           back_populates='Course')
 
     # class constructor
-    def __init__(self, id, name, city):
+    def __init__(self, id, name, capacity):
         self.id = id
         self.name = name
-        self.capacity = 20
+        self.capacity = capacity
 
 
 # 1 to many relationship with courses
@@ -99,10 +101,19 @@ class Lectures(Base):
     __tablename__ = 'LECTURES'
 
     id = Column(String, primary_key=True)
-    Course_Id = Column(String, ForeignKey(Course.id))
+    date = Column(date)
+    mode = Column(String)
+    classroom = Column(String)
 
     # many to 1 relationship with courses
     Course = relationship(Course, back_populates='Lectures')
+
+    # class constructor
+    def __init__(self, id, date, mode, classroom):
+        self.id = id
+        self.date = date
+        self.mode = mode
+        self.classroom = classroom
 
 
 # 1 to many relationship with lectures
