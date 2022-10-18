@@ -65,8 +65,7 @@ def professor_course(user, course):
 
 @app.route('/create_course', methods=['POST'])
 def create_course(user):
-    #id placeholder mettere un id generator direttamente nel db e togliere da qua
-    course = Course( "a", request.form['name'], request.form['capacity'])
+    course = Course(request.form['name'], request.form['capacity'])
     session.add(course)
     session.commit()
     return redirect(url_for('professor_course', user=user, course=course))
@@ -83,8 +82,7 @@ def new_lecture(course):
 
 @app.route('/add_lecture', methods=['POST'])
 def add_lecture(user, course):
-    #id placeholder mettere un id generator direttamente nel db e togliere da qua
-    lecture = Lectures( "a" , request.form['date'], request.form['mode'], request.form['classroom'])
+    lecture = Lectures(request.form['date'], request.form['mode'], request.form['classroom'])
     session.add(lecture)
     session.commit()
     return redirect(url_for('professor_course', user=user, course=course))
