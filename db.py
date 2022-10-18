@@ -99,7 +99,7 @@ class Lectures(Base):
     __tablename__ = 'LECTURES'
 
     id = Column(UUID(as_uuid=True), primary_key=True)
-    date = Column(date)
+    date = Column(Date)
     mode = Column(String)
     classroom = Column(String)
 
