@@ -14,8 +14,8 @@ def login():
     u = User.query.filter_by(request.form['email'])
     s = Student.query.all()
     conn.close()
-    a = []
     #usare righe sotto commentate se il secondo if non funziona
+    #a = []
     #for row in s:
     #    a.append(row)
     if u is not None and request.form['password'] == u.password:
@@ -70,7 +70,7 @@ def create_course(user):
     session.commit()
     return redirect(url_for('professor_course', user=user, course=course))
 
-@app.route('/add_course', methods=['POST'])
+@app.route('/add_course', methods=['GET','POST'])
 def add_course(user):
     course = Course.query.filter_by(name=request.form['name']).first()
     user.Courses.append(course)
