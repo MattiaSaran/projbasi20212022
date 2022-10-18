@@ -12,16 +12,17 @@ def home():
 def login():
     conn = engine.connect()
     u = User.query.filter_by(request.form['email'])
-    #da sistemare riga sotto
     s = Student.query.all()
     conn.close()
+    a = []
+    #usare righe sotto commentate se il secondo if non funziona
+    #for row in s:
+    #    a.append(row)
     if u is not None and request.form['password'] == u.password:
-        #da sistemare righe commentate sotto
-        #if u is in s:
-            #redirect(url_for('student', user=u))
-        #else:
-            #redirect(url_for('professor', user=u))
-        return null #placeholder
+        if u in s:
+            redirect(url_for('student', user=u))
+        else:
+            redirect(url_for('professor', user=u))
     else:
         return redirect(url_for('home'))
 
@@ -64,17 +65,16 @@ def professor_course(user, course):
 
 @app.route('/create_course', methods=['POST'])
 def create_course(user):
-    #id placeholder
+    #id placeholder mettere un id generator direttamente nel db e togliere da qua
     course = Course( "a", request.form['name'], request.form['capacity'])
     session.add(course)
     session.commit()
     return redirect(url_for('professor_course', user=user, course=course))
 
-#add a course to a student curriculum
 @app.route('/add_course', methods=['POST'])
 def add_course(user):
-    #da completare
-    course = 1 #placeholder
+    course = Course.query.filter_by(name=request.form['name']).first()
+    user.Courses.append(course)
     return redirect(url_for('student_course', user=user, course=course))
 
 @app.route('/new_lecture')
@@ -83,7 +83,7 @@ def new_lecture(course):
 
 @app.route('/add_lecture', methods=['POST'])
 def add_lecture(user, course):
-    #id placeholder
+    #id placeholder mettere un id generator direttamente nel db e togliere da qua
     lecture = Lectures( "a" , request.form['date'], request.form['mode'], request.form['classroom'])
     session.add(lecture)
     session.commit()
@@ -91,21 +91,23 @@ def add_lecture(user, course):
 
 @app.route('/update_lecture')
 def update_lecture(lecture):
-    return render_template('update_lecture.html')
+    return render_template('update_lecture.html', lecture = lecture)
 
 @app.route('/update_course')
 def update_course(course):
-    return render_template('update_course.html')
+    return render_template('update_course.html', course = course)
 
-@app.route('/modify_lecture')
+@app.route('/modify_lecture', methods=['GET', 'POST'])
 def modify_lecture(lecture):
-    #placeholder, da cambiare
-    lecture.modify()
+    session.query(Lectures).filter_by(id=lecture.id).first()
+    update({Lectures.date:request.form['date'], Lectures.mode:request.form['mode'], Lectures.classroom:request.form['classroom']}, synchronize_session = False)
+    session.commit()
 
-@app.route('/modify_course')
+@app.route('/modify_course', methods=['GET', 'POST'])
 def modify_course(course):
-    #placeholder, da cambiare
-    course.modify()
+    session.query(Course).filter_by(id=course.id).first()
+    update({Course.name:request.form['name'], Course.capacity:request.form['capacity']}, synchronize_session = False)
+    session.commit()
 
 @app.route('/other_courses')
 def other_courses(user):

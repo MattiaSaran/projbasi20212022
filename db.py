@@ -1,5 +1,5 @@
-from datetime import date
-from statistics import mode
+import uuid
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
@@ -16,15 +16,15 @@ session = Session()
 # definition of the User superclass for teachers and students
 class User(Base):
     __tablename__ = 'USERS'
-    id = Column(String, primary_key=True)
+    id = Column(UUID(as_uuid=True), primary_key=True)
     first_name = Column(String)
     last_name = Column(String)
     password = Column(String)
     email_address = Column(String)
 
     # class constructor
-    def __init__(self, id, first_name, last_name, password, email_address):
-        self.id = id
+    def __init__(self, first_name, last_name, password, email_address):
+        self.id = uuid.uuid4()
         self.first_name = first_name
         self.last_name = last_name
         self.password = password
@@ -39,7 +39,7 @@ Student_Courses = Table('STUDENT_COURSES', Base.metadata, Column('COURSE_ID', Fo
 # inherits from users
 class Student(User):
     __tablename__ = 'STUDENTS'
-    id = Column(String, ForeignKey('USERS.id'), primary_key=true)
+    id = Column(UUID(as_uuid=True), ForeignKey('USERS.id'), primary_key=true)
 
     # hierarchy mapping
     __mapper_args__ = {
@@ -47,15 +47,14 @@ class Student(User):
     }
 
     # class constructor
-    def __init__(self, id, first_name, last_name, password, email_address):
-        super().__init__(id, first_name, last_name, password, email_address)
-        self.id = id
+    def __init__(self, first_name, last_name, password, email_address):
+        super().__init__(first_name, last_name, password, email_address)
 
 
 # inherits from users with
 class Professor(User):
     __tablename__ = 'PROFESSOR'
-    id = Column(String, ForeignKey('USERS.id'), primary_key=true)
+    id = Column(UUID(as_uuid=True), ForeignKey('USERS.id'), primary_key=true)
 
     # hierarchy mapping
     __mapper_args__ = {
@@ -63,14 +62,13 @@ class Professor(User):
     }
 
     # class constructor
-    def __init__(self, id, first_name, last_name, password, email_address):
-        super().__init__(id, first_name, last_name, password, email_address)
-        self.id = id
+    def __init__(self, first_name, last_name, password, email_address):
+        super().__init__(first_name, last_name, password, email_address)
 
 
 class Course(Base):
     __tablename__ = 'COURSES'
-    id = Column(String, primary_key=True)
+    id = Column(UUID(as_uuid=True), primary_key=True)
     name = Column(String)
     capacity = Column(Integer)
 
@@ -82,8 +80,8 @@ class Course(Base):
                           back_populates='Course')
 
     # class constructor
-    def __init__(self, id, name, capacity):
-        self.id = id
+    def __init__(self, name, capacity):
+        self.id = uuid.uuid4()
         self.name = name
         self.capacity = capacity
 
@@ -100,7 +98,7 @@ Student.Courses = relationship(Course, secondary=Student_Courses, back_populates
 class Lectures(Base):
     __tablename__ = 'LECTURES'
 
-    id = Column(String, primary_key=True)
+    id = Column(UUID(as_uuid=True), primary_key=True)
     date = Column(date)
     mode = Column(String)
     classroom = Column(String)
@@ -109,8 +107,8 @@ class Lectures(Base):
     Course = relationship(Course, back_populates='Lectures')
 
     # class constructor
-    def __init__(self, id, date, mode, classroom):
-        self.id = id
+    def __init__(self, date, mode, classroom):
+        self.id = uuid.uuid4()
         self.date = date
         self.mode = mode
         self.classroom = classroom
