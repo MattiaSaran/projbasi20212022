@@ -11,8 +11,8 @@ def home():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     conn = engine.connect()
-    u = User.query.filter_by(request.form['email'])
-    s = Student.query.all()
+    u = session.query(User).filter_by(request.form['email'])
+    s = session.query(Student).all()
     conn.close()
     #usare righe sotto commentate se il secondo if non funziona
     #a = []
@@ -32,12 +32,12 @@ def registration():
 
 @app.route('/student', methods=['GET'])
 def student(user):
-    courses = Course.query.filter_by(student=user).first()
+    courses = session.query(Course).filter_by(student=user).first()
     return render_template('student.html', user=user, courses=courses)
 
 @app.route('/professor', methods=['GET'])
 def professor(user):
-    courses = Course.query.filter_by(professor=user).first()
+    courses = session.query(Course).filter_by(professor=user).first()
     return render_template('professor.html', user=user, courses=courses)
 
 @app.route('/add_user', methods=['POST'])
@@ -72,7 +72,7 @@ def create_course(user):
 
 @app.route('/add_course', methods=['GET','POST'])
 def add_course(user):
-    course = Course.query.filter_by(name=request.form['name']).first()
+    course = session.query(Course).filter_by(name=request.form['name']).first()
     user.Courses.append(course)
     return redirect(url_for('student_course', user=user, course=course))
 
