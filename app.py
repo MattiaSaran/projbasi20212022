@@ -32,12 +32,12 @@ def registration():
 
 @app.route('/student', methods=['GET'])
 def student(user):
-    courses = session.query(Course).filter_by(student=user).first()
+    courses = session.query(Course).filter_by(student=user).all()
     return render_template('student.html', user=user, courses=courses)
 
 @app.route('/professor', methods=['GET'])
 def professor(user):
-    courses = session.query(Course).filter_by(professor=user).first()
+    courses = session.query(Course).filter_by(professor=user).all()
     return render_template('professor.html', user=user, courses=courses)
 
 @app.route('/add_user', methods=['POST'])
