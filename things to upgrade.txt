@@ -1,2 +1,0 @@
-blueprint
-redirection from home to student or professor based on role
