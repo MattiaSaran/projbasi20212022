@@ -23,12 +23,12 @@ class User(Base):
     email_address = Column(String)
 
     # class constructor
-    def __init__(self, first_name, last_name, password, email_address):
+    def __init__(self, first_name, last_name, email_address, password):
         self.id = uuid.uuid4()
         self.first_name = first_name
         self.last_name = last_name
-        self.password = password
         self.email_address = email_address
+        self.password = password
 
 
 # table that defines the many-to-many relationship between students and courses
@@ -47,14 +47,15 @@ class Student(User):
     }
 
     # class constructor
-    def __init__(self, first_name, last_name, password, email_address):
-        super().__init__(first_name, last_name, password, email_address)
+    def __init__(self, first_name, last_name, email_address, password):
+        super().__init__(first_name, last_name, email_address, password)
 
 
 # inherits from users with
 class Professor(User):
     __tablename__ = 'PROFESSOR'
     id = Column(UUID(as_uuid=True), ForeignKey('USERS.id'), primary_key=true)
+    
 
     # hierarchy mapping
     __mapper_args__ = {
@@ -62,8 +63,8 @@ class Professor(User):
     }
 
     # class constructor
-    def __init__(self, first_name, last_name, password, email_address):
-        super().__init__(first_name, last_name, password, email_address)
+    def __init__(self, first_name, last_name, email_address, password):
+        super().__init__(first_name, last_name, email_address, password)
 
 
 class Course(Base):
@@ -73,11 +74,11 @@ class Course(Base):
     capacity = Column(Integer)
 
     # many to 1 relationship with professor
+    professor_id = Column(UUID(as_uuid=True), ForeignKey("PROFESSOR.id"))
     Professor = relationship(Professor, back_populates='Course')
 
     # many-to-many relationship with students
-    Students = relationship(Student, secondary=Student_Courses,
-                          back_populates='Course')
+    Student = relationship(Student, secondary=Student_Courses, back_populates='Course')
 
     # class constructor
     def __init__(self, name, capacity):
@@ -87,12 +88,11 @@ class Course(Base):
 
 
 # 1 to many relationship with courses
-Professor.Courses = relationship(Course, order_by=Course.id,
-                                 back_populates='Professor')
+Professor.Course = relationship(Course, order_by=Course.id, back_populates='Professor')
 
 
 # many-to-many relationship between students and courses
-Student.Courses = relationship(Course, secondary=Student_Courses, back_populates='Student')
+Student.Course = relationship(Course, secondary=Student_Courses, back_populates='Student')
 
 
 class Lectures(Base):
@@ -104,6 +104,7 @@ class Lectures(Base):
     classroom = Column(String)
 
     # many to 1 relationship with courses
+    course_id = Column(UUID(as_uuid=True), ForeignKey("COURSES.id"))
     Course = relationship(Course, back_populates='Lectures')
 
     # class constructor
@@ -115,8 +116,7 @@ class Lectures(Base):
 
 
 # 1 to many relationship with lectures
-Course.Lectures = relationship(Lectures, order_by=Lectures.id,
-                                 back_populates='Course')
+Course.Lectures = relationship(Lectures, order_by=Lectures.id, back_populates='Course')
 
 
 def init_db():
