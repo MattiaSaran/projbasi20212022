@@ -4,7 +4,7 @@
 <div class="text-center">
   <p>Cerca altri corsi <a class="btn btn-primary" role="button" href="{{ url_for('student.other_courses') }}">Vai ai corsi</a></p>
 </div>
-    <form action="/student" method="get">
+    <form action="/student/" method="get">
       {{ user.first_name }}
       {{ user.last_name }}
       {% if courses %}

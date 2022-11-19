@@ -3,7 +3,7 @@ from flask import render_template, request, redirect, url_for
 from flask_login import current_user, login_required
 from flask import Blueprint
 
-professor = Blueprint('professor', __name__)
+professor = Blueprint('professor', __name__, url_prefix='/professor')
 
 @professor.route('/', methods=['GET'])
 @login_required
