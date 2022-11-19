@@ -75,7 +75,7 @@ class Course(Base):
 
     # many to 1 relationship with professor
     professor_id = Column(UUID(as_uuid=True), ForeignKey("PROFESSOR.id"))
-    Professor = relationship(Professor, back_populates='Course')
+    Professor = relationship(Professor, backref='Course')
 
     # many-to-many relationship with students
     Student = relationship(Student, secondary=Student_Courses, back_populates='Course')
@@ -85,10 +85,6 @@ class Course(Base):
         self.id = uuid.uuid4()
         self.name = name
         self.capacity = capacity
-
-
-# 1 to many relationship with courses
-Professor.Course = relationship(Course, order_by=Course.id, back_populates='Professor')
 
 
 # many-to-many relationship between students and courses

@@ -28,9 +28,13 @@ def login():
 @app.route('/student/<user>', methods=['GET'])
 def student(user):
     u = session.query(User).filter_by(id = user).first()
-    c = session.query(Student_Courses).filter_by(STUDENT_ID = user).first()
-    courses = session.query(Course).filter_by(id = c.COURSE_ID).first()
-    return render_template('student.html', name = u.first_name + u.last_name, courses = courses)
+    c_id = session.query(Student_Courses).filter_by(STUDENT_ID = user).first()
+    print("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
+    print(c_id)
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    courses = session.query(Course).filter_by(id = c_id.COURSE_ID).first()
+    print("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC")
+    return render_template('student.html', name = u.first_name + u.last_name, courses = "A") #courses)
 
 @app.route('/professor/<user>', methods=['GET'])
 def professor(user):
