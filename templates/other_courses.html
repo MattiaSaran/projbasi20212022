@@ -1,5 +1,5 @@
 {% block content %}
-    <form action="/other_courses" method="get"> 
+    <form action="/student/other_courses" method="get"> 
       {%for i in other_courses%}
       <div class="mt-5 container">
               <div class="card mx-auto" style="width: 18rem;">
@@ -8,7 +8,7 @@
                     <h6 class="card-subtitle mb-2 text-muted">{{i.subtitle}}</h6>
                     <p class="card-text">{{i.description}}</p>
                     <div class="text-center">
-                      <p>Calendario lezioni <a class="btn btn-primary" role="button" href="{{ url_for('student_course') }}">Vai al Corso</a></p>
+                      <p>Calendario lezioni <a class="btn btn-primary" role="button" href="{{ url_for('student.course') }}">Vai al Corso</a></p>
                     </div>
                 </div>
               </div>

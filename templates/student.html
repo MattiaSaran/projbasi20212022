@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="text-center">
-  <p>Cerca altri corsi <a class="btn btn-primary" role="button" href="{{ url_for('other_courses') }}">Vai ai corsi</a></p>
+  <p>Cerca altri corsi <a class="btn btn-primary" role="button" href="{{ url_for('student.other_courses') }}">Vai ai corsi</a></p>
 </div>
     <form action="/student" method="get">
       {{ user.first_name }}
@@ -18,7 +18,7 @@
                       <h6 class="card-subtitle mb-2 text-muted">{{i.subtitle}}</h6>
                       <p class="card-text">{{i.description}}</p>
                       <div class="text-center">
-                        <p>Calendario lezioni <a class="btn btn-primary" role="button" href="{{ url_for('student_course') }}">Vai al Corso</a></p>
+                        <p>Calendario lezioni <a class="btn btn-primary" role="button" href="{{ url_for('student.course') }}">Vai al Corso</a></p>
                       </div>
                   </div>
                 </div>

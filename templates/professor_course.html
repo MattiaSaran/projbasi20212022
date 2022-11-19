@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <form action="/professor_course" method="get">
+    <form action="/professor/course" method="get">
         <h1>Corso di {{course}}</h1>
         {%for i in lecture%}
             <div class="mt-5 container">
