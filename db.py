@@ -3,6 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
+from flask_login import UserMixin
 
 # association of the engine to the postgresql database in the pc
 engine = create_engine('postgresql://postgres:gallina96!@localhost:5432/my-dbproj', echo=True)
@@ -14,7 +15,7 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 # definition of the User superclass for teachers and students
-class User(Base):
+class User(UserMixin, Base):
     __tablename__ = 'USERS'
     id = Column(UUID(as_uuid=True), primary_key=True)
     first_name = Column(String)

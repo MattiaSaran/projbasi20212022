@@ -2,6 +2,7 @@
 
 {% block content %}
     <form action="/professor" method="get">
+      {% if courses %}
         {%for i in courses%}
             <div class="mt-5 container">
               <div class="card mx-auto" style="width: 18rem;">
@@ -15,6 +16,7 @@
               </div>
             </div>           
         {%endfor%}
+      {% endif %}
     </form>
     <div class="text-center">
       <p>Inserisci nuovo corso <a class="btn btn-primary" role="button" href="{{ url_for('create_course') }}">Clicca qui</a></p>
