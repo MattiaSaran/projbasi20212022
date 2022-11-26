@@ -3,7 +3,7 @@
 {% block content %}
     <div class="container">
         <h1 class="my-5">Aggiungi lezione</h1>
-        <form action="/professor/new_lecture" method="POST">
+        <form action="/new_lecture" method="POST">
             <div class="my-3">
                 <label for="time" class="form-label">Orario</label>
                 <input type="time" class="form-control" id="time" name="time" required>
@@ -13,8 +13,18 @@
                 <input type="date" class="form-control" id="day" name="day" required>
             </div>
             <div class="my-3">
-                <label for="classroom" class="form-label">Aula</label>
-                <input type="text" class="form-control" id="classroom" name="classroom" required>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Seleziona l'aula
+                    </button>
+                    <ul class="dropdown-menu">
+                        {%for i in classroom%}
+                            {%if i.available %}
+                                <li><button class="dropdown-item" type="button">{{i.name}}</button></li>
+                            {%endif%}
+                        {%endfor%}
+                    </ul>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary mt-3">Crea nuova lezione</button>
         </form>
