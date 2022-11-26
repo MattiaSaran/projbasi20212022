@@ -72,7 +72,7 @@ class Course(Base):
     __tablename__ = 'COURSES'
     id = Column(UUID(as_uuid=True), primary_key=True)
     name = Column(String)
-    capacity = Column(Integer)
+    description = Column(String)
 
     # many to 1 relationship with professor
     professor_id = Column(UUID(as_uuid=True), ForeignKey("PROFESSOR.id"))
@@ -82,10 +82,11 @@ class Course(Base):
     Student = relationship(Student, secondary=Student_Courses, back_populates='Course')
 
     # class constructor
-    def __init__(self, name, capacity):
+    def __init__(self, name, capacity, professor):
         self.id = uuid.uuid4()
         self.name = name
         self.capacity = capacity
+        self.professor_id = professor
 
 
 # many-to-many relationship between students and courses

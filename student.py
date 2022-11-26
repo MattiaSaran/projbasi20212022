@@ -32,4 +32,10 @@ def add_course():
 @student.route('/other_courses')
 @login_required
 def other_courses():
-    return render_template('other_courses.html', user = current_user)
+    signed_up = session.query(Student_Courses).filter_by(STUDENT_ID = current_user.id).all()
+    courses = session.query(Course).all()
+    available = list()
+    for i in courses:
+        if i not in signed_up:
+            available.append(i)
+    return render_template('other_courses.html', user = current_user, courses = available)

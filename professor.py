@@ -16,10 +16,15 @@ def page():
 def course(course):
     return render_template('professor_course.html', user = current_user, course = course)
 
+@professor.route('/new_course')
+@login_required
+def new_course():
+    return render_template('create_course.html', user = current_user)
+
 @professor.route('/create_course', methods = ['POST'])
 @login_required
 def create_course():
-    course = Course(request.form.get('name'), request.form.get('capacity'))
+    course = Course(request.form.get('name'), request.form.get('description'), current_user.id)
     session.add(course)
     session.commit()
     return redirect(url_for('professor.course', user = current_user, course = course))
