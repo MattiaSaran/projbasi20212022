@@ -79,18 +79,14 @@ class Course(Base):
     Professor = relationship(Professor, backref='Course')
 
     # many-to-many relationship with students
-    Student = relationship(Student, secondary=Student_Courses, back_populates='Course')
+    Student = relationship(Student, secondary=Student_Courses, backref='Course')
 
     # class constructor
-    def __init__(self, name, capacity, professor):
+    def __init__(self, name, description, professor):
         self.id = uuid.uuid4()
         self.name = name
-        self.capacity = capacity
+        self.description = description
         self.professor_id = professor
-
-
-# many-to-many relationship between students and courses
-Student.Course = relationship(Course, secondary=Student_Courses, back_populates='Student')
 
 
 class Lectures(Base):
@@ -103,7 +99,7 @@ class Lectures(Base):
 
     # many to 1 relationship with courses
     course_id = Column(UUID(as_uuid=True), ForeignKey("COURSES.id"))
-    Course = relationship(Course, back_populates='Lectures')
+    Course = relationship(Course, backref='Lectures')
 
     # class constructor
     def __init__(self, date, mode, classroom):
@@ -112,10 +108,32 @@ class Lectures(Base):
         self.mode = mode
         self.classroom = classroom
 
+# inherits from users with
+class Administrator(User):
+    __tablename__ = 'ADMINISTRATOR'
+    id = Column(UUID(as_uuid=True), ForeignKey('USERS.id'), primary_key=true)
+    
 
-# 1 to many relationship with lectures
-Course.Lectures = relationship(Lectures, order_by=Lectures.id, back_populates='Course')
+    # hierarchy mapping
+    __mapper_args__ = {
+        'polymorphic_identity': 'administrator'
+    }
 
+    # class constructor
+    def __init__(self, first_name, last_name, email_address, password):
+        super().__init__(first_name, last_name, email_address, password)
+
+class Class(Base):
+    __tablename__ = 'CLASS'
+    id = Column(UUID(as_uuid=True), primary_key=True)
+    name = Column(String)
+    capacity = Column(Integer)
+
+    # class constructor
+    def __init__(self, name, capacity):
+        self.id = uuid.uuid4()
+        self.name = name
+        self.capacity = capacity
 
 def init_db():
     Base.metadata.create_all(engine)

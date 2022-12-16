@@ -17,3 +17,5 @@ login_manager.init_app(app)
 @login_manager.user_loader
 def load_user(id):
     return session.query(User).filter_by(id = id).first()
+
+#app.run(port=5000)

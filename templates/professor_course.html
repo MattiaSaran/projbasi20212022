@@ -2,8 +2,9 @@
 
 {% block content %}
     <form action="/professor/course" method="get">
-        <h1>Corso di {{course}}</h1>
-        {%for i in lecture%}
+        <h1>Corso di {{course.name}}</h1>
+        <h1>Descrizione: {{course.description}}</h1>
+        {%for i in lectures%}
             <div class="mt-5 container">
               <div class="card mx-auto" style="width: 18rem;">
                 <div class="card-body">

@@ -17,17 +17,20 @@ def page():
         courses = None
     return render_template('student.html', user = current_user, courses = courses)
 
-@student.route('/<course>')
+@student.route('/<courseid>')
 @login_required
-def student_course(course):
+def course(courseid):
+    course = session.query(Course).filter_by(id = courseid).all()
     return render_template('student_course.html', user = current_user, course = course)
 
 @student.route('/add_course', methods = ['GET','POST'])
 @login_required
 def add_course():
     course = session.query(Course).filter_by(name = request.form.get('name')).first()
-    current_user.Courses.append(course)
-    return redirect(url_for('student.course', user = current_user, course = course))
+    student = session.query(Student).filter_by(id = current_user.id).first()
+    print(student.id)
+    course.Student.append(student)
+    return redirect(url_for('student.course', user = current_user, courseid = course.id))
 
 @student.route('/other_courses')
 @login_required

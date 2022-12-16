@@ -1,15 +1,19 @@
 {% block content %}
-    <form action="/student/other_courses" method="get"> 
-      {%for i in other_courses%}
+    <form action="/student/add_course" method="post"> 
+      {%for i in courses%}
       <div class="mt-5 container">
               <div class="card mx-auto" style="width: 18rem;">
                 <div class="card-body">
+                  <div class="my-3">
+                    <label for="name" class="form-label">Nome</label>
                     <h5 class="card-title">{{i.name}}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">{{i.subtitle}}</h6>
-                    <p class="card-text">{{i.description}}</p>
-                    <div class="text-center">
-                      <p>Calendario lezioni <a class="btn btn-primary" role="button" href="{{ url_for('student.course') }}">Vai al Corso</a></p>
-                    </div>
+                    <input type="hidden" name="name" value="{{i.name}}">
+                  </div>
+                  <div class="my-3">
+                    <label for="name" class="form-label">Description</label>
+                    <h5 class="card-title">{{i.description}}</h5>
+                  </div>
+                    <button type="submit" class="btn btn-primary mt-3">Iscriviti</button>
                 </div>
               </div>
         </div>            

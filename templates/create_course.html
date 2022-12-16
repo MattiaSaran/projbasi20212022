@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <form action="/create_course" method="post">
+    <form action="/professor/create_course" method="post">
         <div class="mt-5 container">
             <form style="max-width:300px; margin:auto">
                 <div class="row">
@@ -11,18 +11,17 @@
                                 Creazione nuovo corso </h1>
                         </div>            
                         
-                        <div class="text-left">
-                            <h3 class="h6 mt-3 mb-1 font-weight-normal">
-                                Nome del corso </h3>
-                            <input type="text" id="name" class="form-control mt-2 mb-2" placeholder="Digita il nome" required autofocus>
-
-                            <h3 class="h6 mt-3 mb-1 font-weight-normal">
-                                Descrizione del corso </h3>
-                            <input type="text" id="description" class="form-control mt-2 mb-2" placeholder="Inserisci una breve descrizione del corso" required autofocus>
+                        <div class="my-3">
+                            <label for="name" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="my-3">
+                            <label for="description" class="form-label">Descrizione</label>
+                            <input type="text" class="form-control" id="description" name="description" required>
                         </div>
             
                         <div class ="text-center mt-3 mb-5">
-                            <button type="button" class="btn btn-lg btn-primary btn-block">
+                            <button type="submit" class="btn btn-primary mt-3">
                                 Crea corso</button>
                         </div>
                     </div>
