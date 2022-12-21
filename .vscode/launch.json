@@ -13,10 +13,7 @@
             "args": [
                 "run"
             ],
-            "envFile": "${workspaceFolder}/.env",
-            "debugOptions": [
-                "RedirectOutput"
-            ]
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

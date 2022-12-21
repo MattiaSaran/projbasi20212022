@@ -15,6 +15,7 @@ def login():
     u = session.query(User).filter_by(email_address = request.form.get('email_address')).first()
     s = session.query(Student).filter_by(id = u.id).first()
     p = session.query(Professor).filter_by(id = u.id).first()
+    a = session.query(Administrator).filter_by(id = u.id).first()
     conn.close()
     if u is not None and request.form.get('password') == u.password:
         if s is not None:
@@ -23,6 +24,9 @@ def login():
         elif p is not None:
             login_user(u)
             return redirect(url_for('professor.page'))
+        elif a is not None:
+            login_user(u)
+            return redirect(url_for('administrator.page'))
         else:
             return null
     else:
@@ -41,6 +45,11 @@ def adduser():
         session.commit()
         return redirect(url_for('profile.home'))
     elif(request.form.get('role') == 'professor'):
+        user = Professor(request.form.get('first_name'), request.form.get('last_name'), request.form.get('email_address'), request.form.get('password'))
+        session.add(user)
+        session.commit()
+        return redirect(url_for('profile.home'))
+    elif(request.form.get('role') == 'administrator'):
         user = Professor(request.form.get('first_name'), request.form.get('last_name'), request.form.get('email_address'), request.form.get('password'))
         session.add(user)
         session.commit()
