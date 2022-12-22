@@ -50,7 +50,7 @@ def adduser():
         session.commit()
         return redirect(url_for('profile.home'))
     elif(request.form.get('role') == 'administrator'):
-        user = Professor(request.form.get('first_name'), request.form.get('last_name'), request.form.get('email_address'), request.form.get('password'))
+        user = Administrator(request.form.get('first_name'), request.form.get('last_name'), request.form.get('email_address'), request.form.get('password'))
         session.add(user)
         session.commit()
         return redirect(url_for('profile.home'))
