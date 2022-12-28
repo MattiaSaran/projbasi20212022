@@ -11,7 +11,7 @@ def page():
     classes = session.query(Class).all()
     return render_template('administrator.html', user = current_user, classes = classes)
 
-@administrator.route('/', methods=['GET'])
+@administrator.route('/create_class', methods=['GET'])
 @login_required
 def create_class():
     return render_template('new_room.html', user = current_user)
@@ -22,4 +22,4 @@ def add_class():
     c = Class(request.form.get('name'), request.form.get('capacity'))
     session.add(c)
     session.commit()
-    return redirect(url_for('administrator'))
+    return redirect(url_for('administrator.page'))

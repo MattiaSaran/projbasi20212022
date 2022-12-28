@@ -1,5 +1,6 @@
 from db import *
 from auth import profile
+from administrator import administrator
 from professor import professor
 from student import student
 from flask import Flask
@@ -9,6 +10,7 @@ login_manager = LoginManager()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret-key-goes-here'
+app.register_blueprint(administrator)
 app.register_blueprint(profile)
 app.register_blueprint(professor)
 app.register_blueprint(student)
