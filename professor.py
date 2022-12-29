@@ -15,7 +15,7 @@ def page():
 @login_required
 def course(courseid):
     course = session.query(Course).filter_by(id = courseid).first()
-    lectures = session.query(Lectures).filter_by(course_id = course.id).all()
+    lectures = session.query(Lecture).filter_by(course_id = course.id).all()
     return render_template('professor_course.html', user = current_user, course = course, lectures = lectures)
 
 @professor.route('/new_course')
@@ -41,7 +41,7 @@ def new_lecture(courseid):
 @login_required
 def add_lecture(courseid):
     course = session.query(Course).filter_by(id = courseid).all()
-    lecture = Lectures(request.form.get('date'), request.form.get('mode'), request.form.get('classroom'))
+    lecture = Lecture(request.form.get('date'), request.form.get('mode'), request.form.get('classroom'))
     session.add(lecture)
     session.commit()
     return redirect(url_for('professor.course', courseid = course.id))
@@ -61,8 +61,8 @@ def update_course(courseid):
 @professor.route('/modify/<lectureid>', methods = ['GET', 'POST'])
 @login_required
 def modify_lecture(lectureid):
-    session.query(Lectures).filter_by(id = lectureid).first()
-    update({Lectures.date:request.form.get('date'), Lectures.mode:request.form.get('mode'), Lectures.classroom:request.form.get('classroom')}, synchronize_session = False)
+    session.query(Lecture).filter_by(id = lectureid).first()
+    update({Lecture.date:request.form.get('date'), Lecture.mode:request.form.get('mode'), Lecture.classroom:request.form.get('classroom')}, synchronize_session = False)
     session.commit()
 
 @professor.route('/modify/<courseid>', methods = ['GET', 'POST'])

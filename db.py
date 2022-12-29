@@ -17,7 +17,7 @@ session = Session()
 
 # definition of the User superclass for teachers, students and administrators
 class User(UserMixin, Base):
-    __tablename__ = 'USERS'
+    __tablename__ = 'USER'
     id = Column(UUID(as_uuid=True), primary_key=True)
     first_name = Column(String)
     last_name = Column(String)
@@ -32,36 +32,27 @@ class User(UserMixin, Base):
         self.email_address = email_address
         self.password = password
 
-
-# table that defines the many-to-many relationship between students and courses
-#Student_Courses = Table('STUDENT_COURSES', Base.metadata, Column('COURSE_ID', ForeignKey('COURSES.id'), primary_key=True),
-#                   Column('STUDENT_ID', ForeignKey('STUDENTS.id'), primary_key=True))
-
-
-# inherits from users
 class Student(User):
-    __tablename__ = 'STUDENTS'
-    id = Column(UUID(as_uuid=True), ForeignKey('USERS.id'), primary_key=true)
-
-    #association proxy
-    Course = association_proxy("student_course", "Course", creator = lambda Course:Student_Courses(Course=Course))
+    __tablename__="STUDENT"
+    # PK column and tablename etc. come from the mixin
+    id = Column(UUID(as_uuid=True), ForeignKey('USER.id'), primary_key=true)
+    # association proxy
+    course = association_proxy('student_course', 'COURSE', creator=lambda course: Student_Course(course=course))
 
     # hierarchy mapping
     __mapper_args__ = {
         'polymorphic_identity': 'student'
     }
 
-    # class constructor
-    def __init__(self, first_name, last_name, email_address, password, Course = None):
+    def __init__(self, first_name, last_name, email_address, password, course = None):
         super().__init__(first_name, last_name, email_address, password)
-        if Course:
-            Course = Course
-
+        if course:
+            self.course = course
 
 # inherits from users with
 class Professor(User):
     __tablename__ = 'PROFESSOR'
-    id = Column(UUID(as_uuid=True), ForeignKey('USERS.id'), primary_key=true)
+    id = Column(UUID(as_uuid=True), ForeignKey('USER.id'), primary_key=true)
     
 
     # hierarchy mapping
@@ -75,33 +66,29 @@ class Professor(User):
 
 
 class Course(Base):
-    __tablename__ = 'COURSES'
-    id = Column(UUID(as_uuid=True), primary_key=True)
+    __tablename__="COURSE"
+    # PK column and tablename etc. come from the mixin
+    id = Column(UUID(as_uuid=True), primary_key=true)
     name = Column(String, unique = True)
     description = Column(String)
 
+    # association proxy
+    student = association_proxy('course_student', 'STUDENT', creator=lambda student: Student_Course(student=student))
+
     # many to 1 relationship with professor
     professor_id = Column(UUID(as_uuid=True), ForeignKey("PROFESSOR.id"))
-    Professor = relationship(Professor, backref='Courses')
+    professor = relationship(Professor, backref='Course')
 
-    # many-to-many relationship with students
-    #Student = relationship(Student, secondary=Student_Courses, backref='Courses')
-
-    #association proxy
-    Student = association_proxy("course_student", "Student", creator = lambda Student:Student_Courses(Student=Student))
-
-    # class constructor
-    def __init__(self, name, description, professor, Student = None):
+    def __init__(self, name, description, professor, student=None):
         self.id = uuid.uuid4()
         self.name = name
         self.description = description
         self.professor_id = professor
-        if Student:
-            Student = Student
+        if student:
+            self.student = student
 
-
-class Lectures(Base):
-    __tablename__ = 'LECTURES'
+class Lecture(Base):
+    __tablename__ = 'LECTURE'
 
     id = Column(UUID(as_uuid=True), primary_key=True)
     date = Column(Date)
@@ -109,8 +96,8 @@ class Lectures(Base):
     classroom = Column(String)
 
     # many to 1 relationship with courses
-    course_id = Column(UUID(as_uuid=True), ForeignKey("COURSES.id"))
-    Course = relationship(Course, backref='Lectures')
+    course_id = Column(UUID(as_uuid=True), ForeignKey("COURSE.id"))
+    course = relationship(Course, backref='lecture')
 
     # class constructor
     def __init__(self, date, mode, classroom):
@@ -122,7 +109,7 @@ class Lectures(Base):
 # inherits from users with
 class Administrator(User):
     __tablename__ = 'ADMINISTRATOR'
-    id = Column(UUID(as_uuid=True), ForeignKey('USERS.id'), primary_key=true)
+    id = Column(UUID(as_uuid=True), ForeignKey('USER.id'), primary_key=true)
     
 
     # hierarchy mapping
@@ -147,24 +134,28 @@ class Class(Base):
         self.capacity = capacity
 
 
-class Student_Courses(Base):
-    __tablename__ = 'STUDENT_COURSES'
-    course_id = Column('COURSE_ID', UUID(as_uuid=True), ForeignKey('COURSES.id'), primary_key=True)
-    student_id = Column('STUDENT_ID', UUID(as_uuid=True), ForeignKey('STUDENTS.id'), primary_key=True)
+class Student_Course(Base):
 
-    Course = relationship(Course, backref = "course_student")
-    Student = relationship(Student, backref = "student_course")
+    __tablename__ = "STUDENT_COURSE"
+    course_id = Column("course_id",
+        UUID(as_uuid=True), ForeignKey("COURSE.id"), primary_key=True)
+    student_id = Column("student_id",
+        UUID(as_uuid=True), ForeignKey("STUDENT.id"), primary_key=True)
+    # relations
+    course = relationship(
+        "Course",
+        backref="course_student",
+        cascade="all, delete-orphan",
+        single_parent=True)
+    student = relationship(
+        "Student",
+        backref="student_course",
+        cascade="all, delete-orphan",
+        single_parent=True)
 
-    def __init__(self, Student = None, Course = None):
-        self.Student = Student
-        self.Course = Course
-
-
-    #def __init__(self, proxied=None):
-    #    if type(proxied) is Course:
-    #        self.Course = proxied
-    #    elif type(proxied) is Student:
-    #        self.Student = proxied
+    def __init__(self, course=None, student=None):
+        self.course = course
+        self.student = student
 
 
 def init_db():
