@@ -13,10 +13,13 @@ def home():
 def login():
     conn = engine.connect()
     u = session.query(User).filter_by(email_address = request.form.get('email_address')).first()
-    s = session.query(Student).filter_by(id = u.id).first()
-    p = session.query(Professor).filter_by(id = u.id).first()
-    a = session.query(Administrator).filter_by(id = u.id).first()
     conn.close()
+    if u is not None:
+        s = session.query(Student).filter_by(id = u.id).first()
+        p = session.query(Professor).filter_by(id = u.id).first()
+        a = session.query(Administrator).filter_by(id = u.id).first()
+    else:
+        return redirect(url_for('profile.home'))
     if u is not None and request.form.get('password') == u.password:
         if s is not None:
             login_user(u)

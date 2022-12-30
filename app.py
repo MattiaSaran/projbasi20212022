@@ -18,6 +18,16 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(id):
-    return session.query(User).filter_by(id = id).first()
+    s = session.query(Student).filter_by(id = id).first()
+    p = session.query(Professor).filter_by(id = id).first()
+    a = session.query(Administrator).filter_by(id = id).first()
+    if s is not None:
+        return session.query(Student).filter_by(id = id).first()
+    elif p is not None:
+        return session.query(Professor).filter_by(id = id).first()
+    elif a is not None:
+        return session.query(Administrator).filter_by(id = id).first()
+    else:
+        return session.query(User).filter_by(id = id).first()
 
 #app.run(port=5000)

@@ -9,13 +9,10 @@
       {{ user.last_name }}
       {% if courses %}
         {%for i in courses%}
-              
-        <h1>Ciao</h1>
-        <div class="mt-5 container">
+              <div class="mt-5 container">
                 <div class="card mx-auto" style="width: 18rem;">
                   <div class="card-body">
                       <h5 class="card-title">{{i.name}}</h5>
-                      <h6 class="card-subtitle mb-2 text-muted">{{i.subtitle}}</h6>
                       <p class="card-text">{{i.description}}</p>
                       <div class="text-center">
                         <p>Calendario lezioni <a class="btn btn-primary" role="button" href="{{ url_for('student.course') }}">Vai al Corso</a></p>

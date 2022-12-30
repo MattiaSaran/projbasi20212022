@@ -20,7 +20,7 @@ def page():
 @student.route('/<courseid>')
 @login_required
 def course(courseid):
-    course = session.query(Course).filter_by(id = courseid).all()
+    course = session.query(Course).filter_by(id = courseid).first()
     return render_template('student_course.html', user = current_user, course = course)
 
 @student.route('/add_course', methods = ['GET','POST'])
@@ -30,7 +30,7 @@ def add_course():
     student = session.query(Student).filter_by(id = current_user.id).first()
     course.student.append(student)
     session.commit()
-    return redirect(url_for('student.course', user = current_user, courseid = course.id))
+    return redirect(url_for('student.course', courseid = course.id))
 
 @student.route('/other_courses')
 @login_required

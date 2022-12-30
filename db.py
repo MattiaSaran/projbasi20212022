@@ -163,3 +163,15 @@ def init_db():
 
 
 init_db()
+
+#prof = Professor("Prof", "1", "prof@unive.it", "password")
+
+#session.add(prof)
+#session.add(Student("Stud", "1", "stud@unive.it", "password"))
+#session.add(Course("ASD", "Corso", prof.id))
+#session.commit()
+
+#student = session.query(Student).first()
+#course = session.query(Course).first()
+#course.student.append(student)
+#session.commit()
