@@ -21,7 +21,8 @@ def page():
 @login_required
 def course(courseid):
     course = session.query(Course).filter_by(id = courseid).first()
-    return render_template('student_course.html', user = current_user, course = course)
+    lectures = session.query(Lecture).filter_by(course_id = courseid).all()
+    return render_template('student_course.html', user = current_user, course = course, lectures = lectures)
 
 @student.route('/add_course', methods = ['GET','POST'])
 @login_required

@@ -10,8 +10,8 @@
                     <h5 class="card-title">{{i.name}}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">{{i.subtitle}}</h6>
                     <p class="card-text">{{i.description}}</p>
-                    <a href="#" class="card-link">Calendario lezioni</a>
-                    <a href="#" class="card-link">Another link</a>
+                    <a href="{{ url_for('professor.new_lecture', courseid = i.id) }}" class="card-link">Calendario lezioni</a>
+                    <!--a href="#" class="card-link">Another link</a-->
                 </div>
               </div>
             </div>           

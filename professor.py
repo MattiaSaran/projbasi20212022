@@ -1,3 +1,4 @@
+import datetime
 from db import *
 from flask import render_template, request, redirect, url_for
 from flask_login import current_user, login_required
@@ -15,7 +16,7 @@ def page():
 @login_required
 def course(courseid):
     course = session.query(Course).filter_by(id = courseid).first()
-    lectures = session.query(Lecture).filter_by(course_id = course.id).all()
+    lectures = session.query(Lecture).filter_by(course_id = courseid).all()
     return render_template('professor_course.html', user = current_user, course = course, lectures = lectures)
 
 @professor.route('/new_course')
@@ -34,17 +35,52 @@ def create_course():
 @professor.route('/new_lecture/<courseid>')
 @login_required
 def new_lecture(courseid):
-    course = session.query(Course).filter_by(id = courseid).all()
-    return render_template('new_lecture.html', course = course)
+    classroom = session.query(Class).all()
+    return render_template('new_lecture.html', course = courseid, classroom = classroom)
 
-@professor.route('/add_lecture/<courseid>', methods = ['POST'])
+@professor.route('/new_lecture/<courseid>', methods = ['POST'])
 @login_required
-def add_lecture(courseid):
-    course = session.query(Course).filter_by(id = courseid).all()
-    lecture = Lecture(request.form.get('date'), request.form.get('mode'), request.form.get('classroom'))
-    session.add(lecture)
-    session.commit()
-    return redirect(url_for('professor.course', courseid = course.id))
+def new_lecture2(courseid):
+    mode = request.form.get('mode')
+    if(mode == 'online'):
+        time = create_slots()
+        slots = list()
+        for i in time:
+            slots.append(i.strftime('%m/%d/%y %H:%M'))
+        return render_template('new_lecture_online.html', course = courseid, slots = slots, mode = mode)
+    else:
+        classroom = session.query(Class).all()
+        return render_template('new_lecture_presenza.html', course = courseid, mode = mode, classroom = classroom)
+
+@professor.route('/new_lecture/<courseid>', methods = ['POST'])
+@login_required
+def new_lecture_orari(courseid):
+    classroom = session.query(Class).all()
+    return render_template('new_lecture_orari.html', course = courseid, classroom = classroom)
+
+@professor.route('/new_lecture/<courseid>', methods = ['POST'])
+@login_required
+def new_lecture_presenza(courseid):
+    classroom = session.query(Class).all()
+    return render_template('new_lecture.html', course = courseid, classroom = classroom)
+
+@professor.route('/add_lecture/<courseid>/<mode>/<classroom>', methods = ['POST'])
+@login_required
+def add_lecture(courseid, mode, classroom):
+    date = datetime.datetime.strptime(request.form.get('slots'), '%m/%d/%y %H:%M')
+    lecture = Lecture(date, mode, classroom, courseid)
+    if(mode != 'online'):
+        if(date not in classroom.slots):
+            return redirect(url_for('professor.new_lecture', courseid))
+        else:
+            classroom.slots.remove(date)
+            session.add(lecture)
+            session.commit()
+            return redirect(url_for('professor.course', courseid = courseid))
+    else:
+        session.add(lecture)
+        session.commit()
+        return redirect(url_for('professor.course', courseid = courseid))
 
 @professor.route('/update/<lectureid>')
 @login_required

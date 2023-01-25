@@ -15,7 +15,7 @@
                       <h5 class="card-title">{{i.name}}</h5>
                       <p class="card-text">{{i.description}}</p>
                       <div class="text-center">
-                        <p>Calendario lezioni <a class="btn btn-primary" role="button" href="{{ url_for('student.course') }}">Vai al Corso</a></p>
+                        <p>Calendario lezioni <a class="btn btn-primary" role="button" href="{{ url_for('student.course', courseid = i.id) }}">Vai al Corso</a></p>
                       </div>
                   </div>
                 </div>

@@ -1,3 +1,4 @@
+import datetime
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.associationproxy import association_proxy
@@ -8,6 +9,29 @@ from flask_login import UserMixin
 
 # association of the engine to the postgresql database in the pc
 engine = create_engine('postgresql://postgres:gallina96!@localhost:5432/my-dbproj', echo=True)
+
+
+def create_slots():
+    start_time = '8:45'
+    end_time = '17:30'
+    slot_time = 105
+
+    start_date = datetime.datetime.now().date()
+    end_date = datetime.datetime.now().date() + datetime.timedelta(days = 90)
+
+    date = start_date
+    slots = []
+    while date <= end_date:
+        time = datetime.datetime.strptime(start_time, '%H:%M')
+        end = datetime.datetime.strptime(end_time, '%H:%M')
+        if date.weekday() != 5 and date.weekday() != 6:
+            while time <= end:
+                slots.append(datetime.datetime.strptime(date.strftime('%m/%d/%y')+' '+time.strftime('%H:%M'),'%m/%d/%y %H:%M'))
+                time += datetime.timedelta(minutes = slot_time)
+        date += datetime.timedelta(days = 1)
+    
+    return slots
+
 
 
 Base = declarative_base()
@@ -91,7 +115,7 @@ class Lecture(Base):
     __tablename__ = 'LECTURE'
 
     id = Column(UUID(as_uuid=True), primary_key=True)
-    date = Column(Date)
+    date = Column(DateTime, unique = True)
     mode = Column(String)
     classroom = Column(String)
 
@@ -100,11 +124,12 @@ class Lecture(Base):
     course = relationship(Course, backref='lecture')
 
     # class constructor
-    def __init__(self, date, mode, classroom):
+    def __init__(self, date, mode, classroom, course):
         self.id = uuid.uuid4()
         self.date = date
         self.mode = mode
         self.classroom = classroom
+        self.course_id = course
 
 # inherits from users with
 class Administrator(User):
@@ -126,12 +151,14 @@ class Class(Base):
     id = Column(UUID(as_uuid=True), primary_key=True)
     name = Column(String, unique = True)
     capacity = Column(Integer)
+    slots = Column(ARRAY(DateTime))
 
     # class constructor
     def __init__(self, name, capacity):
         self.id = uuid.uuid4()
         self.name = name
         self.capacity = capacity
+        self.slots = create_slots()
 
 
 class Student_Course(Base):

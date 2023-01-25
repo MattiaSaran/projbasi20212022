@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="my-5">Aggiungi lezione</h1>
+        <form action="{{ url_for('professor.add_lecture', courseid = course, mode = mode, classroom = mode) }}" method="POST">
+            <div class="my-3">
+                <label for="slots" class="form-label">Orario</label>
+                <select class="select" id="slots" name="slots" required>
+                    {%for i in slots%}
+                        <option value="{{i}}" type="button">{{i}}</option>
+                    {%endfor%}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Crea lezione</button>
+        </form>
+    </div>       
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+{% endblock %}
