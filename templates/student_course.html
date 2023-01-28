@@ -1,15 +1,21 @@
 {% extends 'base.html' %}
 
 {% block content %}
+  <a style ="position: relative; left: 1200px; top: 20px;" class="btn btn-primary" role="button" href="{{ url_for('profile.logout') }}">Log out</a>
+  <a style ="position: relative; top: 20px;" class="btn btn-primary" role="button" href="{{ url_for('student.page') }}">Back to Profile</a>
     <form action="/student/course" method="get">
+      <div class="text-center">
         <h1>Corso di {{course.name}}</h1>
+      </div>
         {%for i in lectures%}
             <div class="mt-5 container">
               <div class="card mx-auto" style="width: 18rem;">
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted"> Orario: {{i.date}}</h6>
                     <p class="card-text">Aula: {{i.classroom}}</p>
-                    <!--<a href="#" class="card-link">Partecipa alla lezione</a>-->
+                    {% if 'online' not in i.mode %}
+                      <a href="{{ url_for('student.reserve_seat', lecture = i.id) }}" class="card-link">Partecipa alla lezione</a>
+                    {% endif %}
                 </div>
               </div>
             </div>           

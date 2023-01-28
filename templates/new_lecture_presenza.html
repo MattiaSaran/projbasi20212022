@@ -3,7 +3,7 @@
 {% block content %}
     <div class="container">
         <h1 class="my-5">Aggiungi lezione</h1>
-        <form action="{{ url_for('professor.new_lecture_presenza', courseid = course) }}" method="POST">
+        <form action="{{ url_for('professor.new_lecture_presenza', courseid = course, mode = mode) }}" method="POST">
             <div class="my-3">
                 <label for="classroom" class="form-label">Classe</label>
                 <select class="select" id="classroom" name="classroom" required>

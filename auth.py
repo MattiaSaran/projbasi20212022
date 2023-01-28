@@ -1,6 +1,6 @@
 from flask import Blueprint
 from db import *
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, flash, redirect, url_for
 from flask_login import login_required, login_user, logout_user
 
 profile = Blueprint('profile', __name__)
@@ -19,6 +19,7 @@ def login():
         p = session.query(Professor).filter_by(id = u.id).first()
         a = session.query(Administrator).filter_by(id = u.id).first()
     else:
+        flash('Credenziali non valide')
         return redirect(url_for('profile.home'))
     if u is not None and request.form.get('password') == u.password:
         if s is not None:
@@ -33,6 +34,7 @@ def login():
         else:
             return null
     else:
+        flash('Credenziali non valide')
         return redirect(url_for('profile.home'))
 
 @profile.route('/registration')

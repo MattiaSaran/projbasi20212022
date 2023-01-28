@@ -1,23 +1,35 @@
 {% extends 'base.html' %}
 
 {% block content %}
+  <a style ="position: relative; left: 1200px; top: 20px;" class="btn btn-primary" role="button" href="{{ url_for('profile.logout') }}">Log out</a>
+  <a style ="position: relative; top: 20px;" class="btn btn-primary" role="button" href="{{ url_for('professor.page') }}">Back to Profile</a>
     <form action="/professor/course" method="get">
+      <div class="text-center">
         <h1>Corso di {{course.name}}</h1>
         <h1>Descrizione: {{course.description}}</h1>
+      </div>
         {%for i in lectures%}
             <div class="mt-5 container">
               <div class="card mx-auto" style="width: 18rem;">
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted"> Orario: {{i.date}}</h6>
                     <p class="card-text">Aula: {{i.classroom}}</p>
-                    <a href="#" class="card-link">Cancella lezione</a>
+                    <a href="{{ url_for('professor.delete_lecture', lectureid = i.id, courseid = i.course_id) }}" class="card-link">Cancella lezione</a>
+                    <a href="{{ url_for('professor.lecture', lecture = i.id) }}" class="card-link">Panoramica</a>
                 </div>
               </div>
             </div>           
         {%endfor%}
+      <div style="position: absolute; top: 100px;" class="mt-5 container">
+        <h6 class="card-subtitle mb-2 text-muted">Numero studenti iscritti al corso: {{count}} </h6>
+        <h6 class="card-subtitle mb-2 text-muted">Lista:</h6>
+        {%for i in students%}
+          <h6 class="card-subtitle mb-2 text-muted">{{i.first_name}} {{i.last_name}}</h6>        
+        {%endfor%}
+      </div>
     </form>
     <div class="text-center">
-      <p>Aggiungi Lezione <a class="btn btn-primary" role="button" href="{{ url_for('professor.new_lecture', courseid = course.id) }}">Clicca qui</a></p>
+      <p  style="position: relative; top: 30px;">Aggiungi Lezione <a class="btn btn-primary" role="button" href="{{ url_for('professor.new_lecture', courseid = course.id) }}">Clicca qui</a></p>
   </div>    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
 {% endblock %}

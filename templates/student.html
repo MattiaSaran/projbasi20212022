@@ -1,12 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<a style ="position: relative; left: 1200px; top: 20px;" class="btn btn-primary" role="button" href="{{ url_for('profile.logout') }}">Log out</a>
 <div class="text-center">
-  <p>Cerca altri corsi <a class="btn btn-primary" role="button" href="{{ url_for('student.other_courses') }}">Vai ai corsi</a></p>
+  <a class="btn btn-primary" role="button" href="{{ url_for('student.other_courses') }}">Cerca altri corsi </a>
+</div>
+<div style="position: relative; top: -600px;" class="mt-5 container">
+  <h6 class="card-subtitle mb-2 text-muted">Studente: </h6>
+  <h6 class="card-subtitle mb-2 text-muted">Nome: {{ user.first_name }}</h6>
+  <h6 class="card-subtitle mb-2 text-muted">Cognome: {{ user.last_name }}</h6>        
 </div>
     <form action="/student/" method="get">
-      {{ user.first_name }}
-      {{ user.last_name }}
       {% if courses %}
         {%for i in courses%}
               <div class="mt-5 container">
@@ -15,7 +19,7 @@
                       <h5 class="card-title">{{i.name}}</h5>
                       <p class="card-text">{{i.description}}</p>
                       <div class="text-center">
-                        <p>Calendario lezioni <a class="btn btn-primary" role="button" href="{{ url_for('student.course', courseid = i.id) }}">Vai al Corso</a></p>
+                        <a class="btn btn-primary" role="button" href="{{ url_for('student.course', courseid = i.id) }}">Vai al Corso</a>
                       </div>
                   </div>
                 </div>

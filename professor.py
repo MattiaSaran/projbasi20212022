@@ -12,12 +12,31 @@ def page():
     courses = session.query(Course).filter_by(professor_id = current_user.id).all()
     return render_template('professor.html', user = current_user, courses = courses)
 
+@professor.route('/lecture/<lecture>', methods=['GET'])
+@login_required
+def lecture(lecture):
+    l = session.query(Lecture).filter_by(id = lecture).first()
+    students = list()
+    for i in l.students:
+        students.append(session.query(User).filter_by(id = i).first())
+    return render_template('lecture.html', lecture = l, students = students)
+
 @professor.route('/<courseid>')
 @login_required
 def course(courseid):
     course = session.query(Course).filter_by(id = courseid).first()
+    s_id = session.query(Student_Course).filter_by(course_id = courseid).all()
+    count = 0
+    if s_id is not None:
+        students = list()
+        for i in s_id:
+            count = count + 1
+            students.append(session.query(Student).filter_by(id = i.student_id).first())
+    else:
+        students = None
     lectures = session.query(Lecture).filter_by(course_id = courseid).all()
-    return render_template('professor_course.html', user = current_user, course = course, lectures = lectures)
+    return render_template('professor_course.html', user = current_user, course = course, lectures = lectures, students = students, count = count)
+
 
 @professor.route('/new_course')
 @login_required
@@ -35,10 +54,9 @@ def create_course():
 @professor.route('/new_lecture/<courseid>')
 @login_required
 def new_lecture(courseid):
-    classroom = session.query(Class).all()
-    return render_template('new_lecture.html', course = courseid, classroom = classroom)
+    return render_template('new_lecture.html', course = courseid)
 
-@professor.route('/new_lecture/<courseid>', methods = ['POST'])
+@professor.route('/new_lecture2/<courseid>', methods = ['POST'])
 @login_required
 def new_lecture2(courseid):
     mode = request.form.get('mode')
@@ -49,62 +67,51 @@ def new_lecture2(courseid):
             slots.append(i.strftime('%m/%d/%y %H:%M'))
         return render_template('new_lecture_online.html', course = courseid, slots = slots, mode = mode)
     else:
-        classroom = session.query(Class).all()
+        c = session.query(Class).all()
+        classroom = list()
+        for i in c:
+            classroom.append(i.name)
         return render_template('new_lecture_presenza.html', course = courseid, mode = mode, classroom = classroom)
 
-@professor.route('/new_lecture/<courseid>', methods = ['POST'])
+@professor.route('/new_lecture_presenza/<courseid>/<mode>', methods = ['POST'])
 @login_required
-def new_lecture_orari(courseid):
-    classroom = session.query(Class).all()
-    return render_template('new_lecture_orari.html', course = courseid, classroom = classroom)
-
-@professor.route('/new_lecture/<courseid>', methods = ['POST'])
-@login_required
-def new_lecture_presenza(courseid):
-    classroom = session.query(Class).all()
-    return render_template('new_lecture.html', course = courseid, classroom = classroom)
+def new_lecture_presenza(courseid, mode):
+    classroom = request.form.get('classroom')
+    c = session.query(Class).filter_by(name = classroom).first()
+    slots = list()
+    for i in c.slots:
+        slots.append(i.strftime('%m/%d/%y %H:%M'))
+    return render_template('new_lecture_orari.html', course = courseid, classroom = classroom, mode = mode, slots = slots)
 
 @professor.route('/add_lecture/<courseid>/<mode>/<classroom>', methods = ['POST'])
 @login_required
 def add_lecture(courseid, mode, classroom):
     date = datetime.datetime.strptime(request.form.get('slots'), '%m/%d/%y %H:%M')
-    lecture = Lecture(date, mode, classroom, courseid)
     if(mode != 'online'):
-        if(date not in classroom.slots):
+        c = session.query(Class).filter_by(name = classroom).first()
+        lecture = Lecture(date, mode, classroom, courseid, c.capacity)
+        if(date not in c.slots):
             return redirect(url_for('professor.new_lecture', courseid))
         else:
-            classroom.slots.remove(date)
+            c.slots.remove(date)
             session.add(lecture)
             session.commit()
             return redirect(url_for('professor.course', courseid = courseid))
     else:
+        lecture = Lecture(date, mode, classroom, courseid, 0)
         session.add(lecture)
         session.commit()
         return redirect(url_for('professor.course', courseid = courseid))
 
-@professor.route('/update/<lectureid>')
+@professor.route('/delete_lecture/<lectureid>/<courseid>')
 @login_required
-def update_lecture(lectureid):
-    lecture = session.query(Course).filter_by(id = lectureid).all()
-    return render_template('update_lecture.html', lecture = lecture)
-
-@professor.route('/update/<courseid>')
-@login_required
-def update_course(courseid):
-    course = session.query(Course).filter_by(id = courseid).all()
-    return render_template('update_course.html', course = course)
-
-@professor.route('/modify/<lectureid>', methods = ['GET', 'POST'])
-@login_required
-def modify_lecture(lectureid):
-    session.query(Lecture).filter_by(id = lectureid).first()
-    update({Lecture.date:request.form.get('date'), Lecture.mode:request.form.get('mode'), Lecture.classroom:request.form.get('classroom')}, synchronize_session = False)
+def delete_lecture(lectureid, courseid):
+    lecture = session.query(Lecture).filter_by(id = lectureid).first()
+    if(lecture.mode != 'online'):
+        classroom = session.query(Class).filter_by(name = lecture.classroom).first()
+        classroom.slots.append(lecture.date)
+        classroom.slots.sort()
+        session.commit()
+    session.delete(lecture)
     session.commit()
-
-@professor.route('/modify/<courseid>', methods = ['GET', 'POST'])
-@login_required
-def modify_course(courseid):
-    course = session.query(Course).filter_by(id = courseid).all()
-    session.query(Course).filter_by(id = course.id).first()
-    update({Course.name:request.form.get('name'), Course.capacity:request.form.get('capacity')}, synchronize_session = False)
-    session.commit()
+    return redirect(url_for('professor.course', courseid = courseid))

@@ -1,8 +1,0 @@
-completare creazione lezioni e prenotazione (distinguere in base a lezioni online (scelta "Online"
-non mette limite alle prenotazioni degli studenti) e in presenza (Accesso possibile solo se le prenotazioni
-non superano i posti disponibili in aula))
-inserire aule disponibili in base ad orario e nome aula (aule saranno disponibili se non c'é gia una lezione
-nella stessa aula e nello stesso momento)
-aggiungere update delle informazioni di lezioni, corsi e utenti (probabilmente non serve fare la funzione
-update, ma basta fare la query, recuperare l'oggeto, modificare il campo 
-con assegnamento (es. utente1.first_name = "Marco") e poi fare session.commit())

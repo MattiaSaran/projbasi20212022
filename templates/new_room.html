@@ -2,6 +2,8 @@
 
 {% block content %}
     <div class="container">
+        <a style ="position: relative; left: 1100px; top: 20px;" class="btn btn-primary" role="button" href="{{ url_for('profile.logout') }}">Log out</a>
+        <a style ="position: absolute; left: 30px; top: 20px;" class="btn btn-primary" role="button" href="{{ url_for('administrator.page') }}">Back to Profile</a>
         <h1 class="my-5">Aggiungi aula</h1>
         <form action="/administrator/add_class" method="POST">
             <div class="my-3">

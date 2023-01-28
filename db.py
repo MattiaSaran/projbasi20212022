@@ -1,6 +1,7 @@
 import datetime
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker, relationship
@@ -115,21 +116,29 @@ class Lecture(Base):
     __tablename__ = 'LECTURE'
 
     id = Column(UUID(as_uuid=True), primary_key=True)
-    date = Column(DateTime, unique = True)
+    date = Column(DateTime)
     mode = Column(String)
     classroom = Column(String)
+    seats = Column(Integer)
+    students = Column(MutableList.as_mutable(ARRAY(UUID(as_uuid=True))))
+
+    UniqueConstraint('classroom', 'date')
 
     # many to 1 relationship with courses
     course_id = Column(UUID(as_uuid=True), ForeignKey("COURSE.id"))
-    course = relationship(Course, backref='lecture')
+    course = relationship(Course, backref='lecture', )
+
+    UniqueConstraint('course_id', 'date')
 
     # class constructor
-    def __init__(self, date, mode, classroom, course):
+    def __init__(self, date, mode, classroom, course, seats):
         self.id = uuid.uuid4()
         self.date = date
         self.mode = mode
         self.classroom = classroom
         self.course_id = course
+        self.seats = seats
+        self.students = list()
 
 # inherits from users with
 class Administrator(User):
@@ -151,7 +160,7 @@ class Class(Base):
     id = Column(UUID(as_uuid=True), primary_key=True)
     name = Column(String, unique = True)
     capacity = Column(Integer)
-    slots = Column(ARRAY(DateTime))
+    slots = Column(MutableList.as_mutable(ARRAY(DateTime)))
 
     # class constructor
     def __init__(self, name, capacity):
